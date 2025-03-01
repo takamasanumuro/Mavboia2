@@ -8,17 +8,37 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ReactiveUI;
+using Core.ViewModels;
+using System.Reactive.Disposables;
+using Splat;
 
 namespace Core
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    /// 
+    public class MainWindowBase : ReactiveWindow<MainViewModel> { }
+    public partial class MainWindow : MainWindowBase
     {
         public MainWindow()
         {
             InitializeComponent();
+            var viewModelInstance = new MainViewModel();
+            ViewModel = viewModelInstance;
+
+            this.WhenActivated(disposables =>
+            {
+                this.OneWayBind(viewModelInstance, ViewModel => ViewModel.Router, View => View.RoutedViewHost.Router)
+                    .DisposeWith(disposables);
+                this.BindCommand(viewModelInstance, ViewModel => ViewModel.NavigateToBattery, View => View.ButtonBattery)
+                    .DisposeWith(disposables);
+                this.BindCommand(viewModelInstance, ViewModel => ViewModel.NavigateToDashboard, View => View.ButtonDashboard)
+                    .DisposeWith(disposables);
+            });
+
+            
         }
     }
 }
