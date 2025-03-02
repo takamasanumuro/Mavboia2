@@ -29,6 +29,10 @@ namespace Core
 
             Locator.CurrentMutable.Register(() => new DashboardView(), typeof(IViewFor<DashboardViewModel>));
             Locator.CurrentMutable.Register(() => new BatteryView(), typeof(IViewFor<BatteryViewModel>));
+            Locator.CurrentMutable.Register(() => new GraphicalView(), typeof(IViewFor<GraphicalViewModel>));
+            Locator.CurrentMutable.Register(() => new MapView(), typeof(IViewFor<MapViewModel>));
+            Locator.CurrentMutable.Register(() => new DSBView(), typeof(IViewFor<DSBViewModel>));
+            Locator.CurrentMutable.Register(() => new SettingsView(), typeof(IViewFor<SettingsViewModel>));
         }
     }
 

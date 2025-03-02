@@ -18,6 +18,10 @@ namespace Core.ViewModels
 
         public ReactiveCommand<Unit, IRoutableViewModel> NavigateToDashboard { get; }
         public ReactiveCommand<Unit, IRoutableViewModel> NavigateToBattery { get; }
+        public ReactiveCommand<Unit, IRoutableViewModel> NavigateToGraphical { get; }
+        public ReactiveCommand<Unit, IRoutableViewModel> NavigateToMap { get; }
+        public ReactiveCommand<Unit, IRoutableViewModel> NavigateToDSB { get; }
+        public ReactiveCommand<Unit, IRoutableViewModel> NavigateToSettings { get;}
 
 
         public MainViewModel()
@@ -26,6 +30,14 @@ namespace Core.ViewModels
             NavigateToDashboard = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(new DashboardViewModel(this)));
 
             NavigateToBattery = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(new BatteryViewModel(this)));
+
+            NavigateToGraphical = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(new GraphicalViewModel(this)));
+
+            NavigateToMap = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(new MapViewModel(this)));
+
+            NavigateToDSB = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(new DSBViewModel(this)));
+
+            NavigateToSettings = ReactiveCommand.CreateFromObservable(() => Router.Navigate.Execute(new SettingsViewModel(this)));
 
             Router.Navigate.Execute(new DashboardViewModel(this));
         }

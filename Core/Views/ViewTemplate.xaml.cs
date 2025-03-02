@@ -17,13 +17,10 @@ using System.Windows.Shapes;
 
 namespace Core.Views
 {
-
-    public class DashboardViewBase : ReactiveUserControl<DashboardViewModel> { }
-
-
-    public partial class DashboardView : DashboardViewBase
+    public class TemplateViewBase : ReactiveUserControl<TemplateViewModel> { }
+    public partial class TemplateView : TemplateViewBase
     {
-        public DashboardView()
+        public TemplateView()
         {
             InitializeComponent();
         }

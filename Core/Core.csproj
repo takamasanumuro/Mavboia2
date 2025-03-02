@@ -19,4 +19,10 @@
     <PackageReference Include="ReactiveUI.WPF" Version="20.1.63" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Views\ViewTemplate.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

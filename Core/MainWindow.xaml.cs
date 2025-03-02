@@ -25,17 +25,23 @@ namespace Core
         public MainWindow()
         {
             InitializeComponent();
-            var viewModelInstance = new MainViewModel();
-            ViewModel = viewModelInstance;
+
+            ViewModel = Locator.Current.GetService<MainViewModel>();
 
             this.WhenActivated(disposables =>
             {
-                this.OneWayBind(viewModelInstance, ViewModel => ViewModel.Router, View => View.RoutedViewHost.Router)
+                this.OneWayBind(ViewModel, ViewModel => ViewModel.Router, View => View.RoutedViewHost.Router)
                     .DisposeWith(disposables);
-                this.BindCommand(viewModelInstance, ViewModel => ViewModel.NavigateToBattery, View => View.ButtonBattery)
+                this.BindCommand(ViewModel, ViewModel => ViewModel.NavigateToBattery, View => View.ButtonBattery)
                     .DisposeWith(disposables);
-                this.BindCommand(viewModelInstance, ViewModel => ViewModel.NavigateToDashboard, View => View.ButtonDashboard)
+                this.BindCommand(ViewModel, ViewModel => ViewModel.NavigateToDashboard, View => View.ButtonDashboard)
                     .DisposeWith(disposables);
+                this.BindCommand(ViewModel, ViewModel => ViewModel.NavigateToGraphical, View => View.ButtonGraphical)
+                    .DisposeWith(disposables);
+                this.BindCommand(ViewModel, ViewModel => ViewModel.NavigateToMap, View => View.ButtonMap);
+                this.BindCommand(ViewModel, ViewModel => ViewModel.NavigateToDSB, View => View.ButtonDSB)
+                    .DisposeWith(disposables);
+                this.BindCommand(ViewModel, ViewModel => ViewModel.NavigateToSettings, View => View.ButtonSettings);
             });
 
             

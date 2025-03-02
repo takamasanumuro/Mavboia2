@@ -19,13 +19,22 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                    <Button Grid.Row="0" Content="Dashboard" x:Name="ButtonDashboard"/>
-                    <Button Grid.Row="1" Content="Battery"   x:Name="ButtonBattery"/>
+                <Button Grid.Row="0" Content="Dashboard"        x:Name="ButtonDashboard"/>
+                <Button Grid.Row="1" Content="Bateria"          x:Name="ButtonBattery"/>
+                <Button Grid.Row="2" Content="Gráficos"         x:Name="ButtonGraphical"/>
+                <Button Grid.Row="3" Content="Mapa"             x:Name="ButtonMap"/>
+                <Button Grid.Row="4" Content="DSB"              x:Name="ButtonDSB"/>
+                <Button Grid.Row="5" Content="Configurações"    x:Name="ButtonSettings"/>
             </Grid>
         </Grid>
 
-        <rui:RoutedViewHost Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" x:Name="RoutedViewHost"/>
-        
+        <rui:RoutedViewHost x:Name="RoutedViewHost" Grid.Column="1" />
+
+
     </Grid>
 </local:MainWindowBase>
