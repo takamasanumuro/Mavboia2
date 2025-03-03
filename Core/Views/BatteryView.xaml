@@ -5,9 +5,341 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Core.Views"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="800" d:DesignWidth="800">
+    <local:BatteryViewBase.Resources>
+        <local:BatteryLevelToColorConverter x:Key="BatteryLevelToColorConverter"/>
+    </local:BatteryViewBase.Resources>
     <Grid>
-        <Label Content="Battery" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24"> </Label>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Toolbar -->
+        <ToolBar Grid.Row="0">
+            <Button Content="Dados"/>
+            <Button Content="Gráficos"/>
+        </ToolBar>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!---Status-->
+                <RowDefinition Height="*"/>
+                <!--Gráficos-->
+                <RowDefinition Height="Auto"/>
+                <!--Alarmes-->
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <!--Bateria Principal -->
+                    <ColumnDefinition Width="*"/>
+                    <!--Bateria Auxiliar -->
+                    <ColumnDefinition Width="*"/>
+                    <!--Tabelas -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Battery Status Section -->
+                <GroupBox Grid.Column="0" Header="Status das Baterias">
+
+                    <!-- Left Column -->
+                    <StackPanel>
+                        <TextBlock Text="Bateria Principal" FontWeight="Bold" Margin="0 10"/>
+                        <TextBlock Text="Tensão: [Valor]"/>
+                        <TextBlock Text="Corrente: [Valor]"/>
+                        <TextBlock Text="SOC: [Valor]"/>
+                        <Grid Width="100" Height="50" HorizontalAlignment="Left" Margin="0 5">
+                            <!--Battery body-->
+                            <Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Background="LightGray">
+                                <ProgressBar x:Name="MainBatteryLevel" Minimum="0" Maximum="100" Value="19">
+                                    <ProgressBar.Template>
+                                        <!--Gives a rounded fill for the progress bar-->
+                                        <ControlTemplate TargetType="ProgressBar">
+                                            <Border BorderBrush="Transparent" BorderThickness="0" CornerRadius="5">
+                                                <Grid x:Name="PART_Track">
+                                                    <Rectangle x:Name="PART_Indicator" Fill="{TemplateBinding Foreground}"
+                                                               HorizontalAlignment="Left" RadiusX="5" RadiusY="5"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ProgressBar.Template>
+                                </ProgressBar>
+                            </Border>
+                            <!--Battery head-->
+                            <Border Width="10" Height="15" BorderBrush="Black" BorderThickness="2" CornerRadius="2" Background="LightGray"
+                                    VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5 0 -8 0" />
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" >
+                            <ToggleButton Content="MOSFET Carga"
+                                            IsEnabled="True"
+                                            Margin="0,5,5,5"
+                                            HorizontalAlignment="Left"
+                                            Width="100"
+                                            >
+                                <ToggleButton.Style>
+                                    <Style TargetType="{x:Type ToggleButton}">
+                                        <!-- Style for Read-Only ToggleButton -->
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Gray"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter Property="Padding" Value="5"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                    <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <!-- Change appearance based on IsChecked state -->
+                                        <Style.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter Property="Background" Value="LightGreen"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                                <Setter Property="Content" Value="Carga MOSFET: Ligado"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="False">
+                                                <Setter Property="Background" Value="LightCoral"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                                <Setter Property="Content" Value="Carga MOSFET: Desligado"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <ToggleButton   Content="MOSFET Descarga"
+                                            x:Name="ToggleButtonDischargeMosfet"
+                                            IsEnabled="True"
+                                            Width="100"
+                                            HorizontalAlignment="Left"
+                                            Margin="5,5,0,5">
+                                <ToggleButton.Style>
+                                    <Style TargetType="{x:Type ToggleButton}">
+                                        <!-- Style for Read-Only ToggleButton -->
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Gray"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter Property="Padding" Value="5"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                    <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                                        <ContentPresenter HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <!-- Change appearance based on IsChecked state -->
+                                        <Style.Triggers>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter Property="Background" Value="LightGreen"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                                <Setter Property="Content" Value="Descarga MOSFET: Ligado"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="False">
+                                                <Setter Property="Background" Value="LightCoral"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                                <Setter Property="Content" Value="Descarga MOSFET: Desligado"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                        </StackPanel>
+
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Grid.Column="1" Header="Auxiliar">
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Bateria Auxiliar" FontWeight="Bold" Margin="0 10"/>
+                        <TextBlock Text="Tensão: [Valor]"/>
+                        <TextBlock Text="Corrente: [Valor]"/>
+                        <TextBlock Text="SOC: [Valor]"/>
+                        <Grid Width="100" Height="50" HorizontalAlignment="Left" Margin="0 5">
+                            <!--Battery body-->
+                            <Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Background="LightGray">
+                                <ProgressBar x:Name="AuxiliaryBatteryLevel" Minimum="0" Maximum="100" Value="19">
+                                    <ProgressBar.Template>
+                                        <!--Gives a rounded fill for the progress bar-->
+                                        <ControlTemplate TargetType="ProgressBar">
+                                            <Border BorderBrush="Transparent" BorderThickness="0" CornerRadius="5">
+                                                <Grid x:Name="PART_Track">
+                                                    <Rectangle x:Name="PART_Indicator" Fill="{TemplateBinding Foreground}"
+                                                               HorizontalAlignment="Left" RadiusX="5" RadiusY="5"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </ProgressBar.Template>
+                                </ProgressBar>
+                            </Border>
+                            <!--Battery head-->
+                            <Border Width="10" Height="15" BorderBrush="Black" BorderThickness="2" CornerRadius="2" Background="LightGray"
+                                    VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5 0 -8 0" />
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Right Panel-->
+                <StackPanel Grid.Column="2" Margin="5">
+                    <GroupBox Header="">
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Tensão da Célula" FontWeight="Bold"/>
+                            <UniformGrid Rows="4" Columns="4">
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="1S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="2S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="3S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="4S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="5S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="6S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="7S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="8S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="9S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="10S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="11S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="12S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="13S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="14S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="15S" />
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="16S" />
+                                </Border>
+                            </UniformGrid>
+
+                            <TextBlock Text="Temperaturas" FontWeight="Bold"  Margin="0 10"/>
+                            <UniformGrid Rows="1" Columns="2" Margin="0 0 0 0">
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="1" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Border BorderBrush="Gray" BorderThickness="1" HorizontalAlignment="Stretch" Height="30">
+                                    <TextBlock Text="2" HorizontalAlignment="Center" />
+                                </Border>
+                            </UniformGrid>
+
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--Voltage gauge-->
+                <StackPanel Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center">
+                    <TextBlock Text="Tensão" FontSize="14" FontWeight="Bold"  HorizontalAlignment="Center"/>
+                    <lvc:AngularGauge x:Name="AngularGauge"
+                          Width="200" Height="150" 
+                          Margin="15 5"
+                          FromValue="32" ToValue="60">
+                        <lvc:AngularGauge.Sections>
+                            <lvc:AngularSection FromValue="32" ToValue="40" Fill="Red"/>
+                            <lvc:AngularSection FromValue="40" ToValue="48" Fill="Yellow"/>
+                            <lvc:AngularSection FromValue="48" ToValue="60" Fill="Green"/>
+                        </lvc:AngularGauge.Sections>
+                    </lvc:AngularGauge>
+                </StackPanel>
+
+                <Grid Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Tensão" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <lvc:CartesianChart x:Name="VoltageChart" 
+                         
+                          Margin="15 5">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Title="Tensão" Values="{Binding VoltageValues}" LineSmoothness="0.5"/>
+                        </lvc:CartesianChart.Series>
+                    </lvc:CartesianChart>
+                </Grid>
+
+                <!-- Current Gauge -->
+                <Grid Grid.Column="0" Grid.Row="1" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Corrente" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <lvc:AngularGauge x:Name="CurrentGauge"
+                          Width="200" Height="150" 
+                          Margin="15 5"
+                          FromValue="-25" ToValue="85">
+                        <lvc:AngularGauge.Sections>
+                            <lvc:AngularSection FromValue="-25" ToValue="0" Fill="Blue"/>
+                            <lvc:AngularSection FromValue="0" ToValue="40" Fill="Green"/>
+                            <lvc:AngularSection FromValue="40" ToValue="60" Fill="Yellow"/>
+                            <lvc:AngularSection FromValue="60" ToValue="85" Fill="Red"/>
+                        </lvc:AngularGauge.Sections>
+                    </lvc:AngularGauge>
+                </Grid>
+
+                <Grid Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch">
+                    <TextBlock Text="Corrente" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <lvc:CartesianChart x:Name="CurrentChart" 
+                         
+                          Margin="15 5">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Title="Corrente" Values="{Binding VoltageValues}" LineSmoothness="0.5"/>
+                        </lvc:CartesianChart.Series>
+                    </lvc:CartesianChart>
+                </Grid>
+
+            </Grid>
+
+            <Expander Grid.Row="2" Header="Alarmes" Margin="0 5">
+                <StackPanel>
+                    <TextBlock Text="Alarme 1"/>
+                    <TextBlock Text="Alarme 2"/>
+                    <TextBlock Text="Alarme 3"/>
+                    <TextBlock Text="Alarme 4"/>
+                </StackPanel>
+            </Expander>
+
+        </Grid>
     </Grid>
 </local:BatteryViewBase>

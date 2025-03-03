@@ -2,6 +2,7 @@
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,28 @@ namespace Core.Views
     /// Interaction logic for BatteryView.xaml
     /// </summary>
     /// 
+
+    public class BatteryLevelToColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is int batteryLevel)
+            {
+                if (batteryLevel <= 20)
+                    return Brushes.Red;
+                else if (batteryLevel <= 60)
+                    return Brushes.Orange;
+                else
+                    return Brushes.Green;
+            }
+            return Brushes.Transparent;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 
     public class BatteryViewBase : ReactiveUserControl<BatteryViewModel> { }
 

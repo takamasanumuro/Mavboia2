@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:Core"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary Source="/Themes/DarkPurple.xaml" />
     </Application.Resources>
 </Application>
