@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MavlinkLibrary\src\Asv.Mavlink\Asv.Mavlink.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Views\ViewTemplate.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

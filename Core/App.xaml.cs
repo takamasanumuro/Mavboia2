@@ -5,6 +5,7 @@ using Splat;
 using System.Configuration;
 using System.Data;
 using System.Windows;
+using Application = System.Windows.Application;
 
 namespace Core
 {
@@ -13,18 +14,21 @@ namespace Core
     /// </summary>
     public partial class App : Application
     {
+        //private Core.Services.MavlinkCommand mavlinkCommand;
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             RegisterDependencies();
+            var mavlinkCommand = new Core.Services.MavlinkCommand();
+            mavlinkCommand.RunMavlink();
         }
 
         private void RegisterDependencies()
         {
-            var MainViewModel = new MainViewModel();
-            Locator.CurrentMutable.RegisterConstant(MainViewModel, typeof(MainViewModel));
-            Locator.CurrentMutable.RegisterConstant(MainViewModel, typeof(IScreen));
-            Locator.CurrentMutable.RegisterLazySingleton(() => new DashboardViewModel(MainViewModel), typeof(DashboardViewModel));
+            var mainViewModel = new MainViewModel();
+            Locator.CurrentMutable.RegisterConstant(mainViewModel, typeof(MainViewModel));
+            Locator.CurrentMutable.RegisterConstant(mainViewModel, typeof(IScreen));
+            Locator.CurrentMutable.RegisterLazySingleton(() => new DashboardViewModel(mainViewModel), typeof(DashboardViewModel));
 
 
             Locator.CurrentMutable.Register(() => new DashboardView(), typeof(IViewFor<DashboardViewModel>));
