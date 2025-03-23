@@ -34,12 +34,6 @@ namespace Core.Services
 
             conn.OnRxMessage.FilterByType<MavlinkMessage>().Subscribe(OnPacket);
             conn.AddPort(_connectionString);
-            //conn.OnRxMessage.AsSystemObservable().Where(m => m is MavlinkMessage).Subscribe();
-
-            //while (!_cancel.IsCancellationRequested)
-            //{
-            //    Task.Delay(3000, _cancel.Token).Wait();
-            //}
         }
 
 
